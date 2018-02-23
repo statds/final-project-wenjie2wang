@@ -1,0 +1,100 @@
+---
+title: "Application of Random Forests and Deep Neural Networks to Survival Data"
+subtitle: "STAT-6494 Project Proposal"
+author:
+  - Wenjie Wang^[<wenjie.2.wang@uconn.edu>; Ph.D. student at
+    Department of Statistics, University of Connecticut.]
+date: "`r format(Sys.time(), '%d %B %Y')`"
+documentclass: article
+papersize: letter
+fontsize: 11pt
+bibliography: ds.bib
+biblio-style: datalab
+abstract: |
+  The classical survival models, such as Cox proportional hazard model, often
+  require extensive efforts on variable selection or prior medical information
+  to model interaction between patients' covariates and treatment covariates.
+  While nonlinear models, such as neural networks and random forests, are able
+  to model high-order interaction terms. It is of interest to apply these
+  machine learning methods to survival data and compare their performance with
+  classical statistical models.
+---
+
+
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
+## some utility functions, see the source code for details
+source("utils_template.R")
+
+## specify the packages needed
+## pkgs <- c("ggplot2")
+## need.packages(pkgs)
+
+## external data can be read in by regular functions,
+## such as read.table or load
+
+## for latex and html output
+isHtml <- knitr::is_html_output()
+isLatex <- knitr::is_latex_output()
+latex <- ifelse(isLatex, '\\LaTeX\\', 'LaTeX')
+
+## specify global chunk options
+knitr::opts_chunk$set(fig.width = 5, fig.height = 4, dpi = 300,
+                      out.width = "90%", fig.align = "center")
+
+```
+
+
+# Introduction and Objects {#sec:intro}
+
+
+For survival data, medical researchers' interests often lie in discovery of
+significant treatment effects and important diagnosis covariates of patients.
+The classical survival models, such as Cox proportional hazard model, assume
+risk function in a simple linear form of covariates, which can be too simplistic
+to capture the underlying relationship between response and covariates.  In
+addition, they often require extensive efforts on variable selection or prior
+medical information to model interaction between patients' covariates and
+treatment covariates.  While nonlinear models, such as neural networks and
+random forests, are able to model high-order interaction terms. It is of
+interest to apply these machine learning methods to survival data and compare
+their performance with classical statistical models. It would be even more
+interesting to discover nonlinear relationship by machine learning methods and
+build a statistical model for better interpretation and capability for
+statistical inferences.
+
+
+The specific objectives include:
+
+- Explore and review existing machine methods for survival data including random
+  forests and deep neural networks.
+
+- Apply these methods for CT suicidal data.
+
+- Compare the out-of-sample model fitting or prediction performance of these
+  methods with classical survival models, such as Cox model.
+
+
+# Random Forests for Survival Data
+
+Main reference includes
+
+- @ishwaran2008aoas
+- @mogensen2012jss
+
+
+# Deep Neural Networks for Survival Data
+
+Main reference includes
+
+- @katzman2016arxiv
+- @nair2010icml
+- @ioffe2015icml
+- @klambauer2017anips
+- @srivastava2014jmlr
+- @kingma2014arxiv
+- @nesterov2013mp
+- @Pascanu2012corr
+
+
+# Reference {-}
+
