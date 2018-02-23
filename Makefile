@@ -12,8 +12,8 @@ html_out := $(patsubst %.Rmd,%.html,$(rmd_source))
 repos := https://cloud.r-project.org
 
 
-.PHONY: all
-all: $(pdf_out) $(html_out)
+# .PHONY: all
+# all: $(pdf_out) $(html_out)
 
 .PHONY: pdf
 pdf: $(pdf_out)
