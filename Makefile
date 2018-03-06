@@ -7,6 +7,7 @@ preamble := $(wildcard latex/*.tex)
 ## corresponding output names
 pdf_out := $(patsubst %.Rmd,%.pdf,$(rmd_source))
 html_out := $(patsubst %.Rmd,%.html,$(rmd_source))
+bib_out := $(patsubst %.Rmd,%.bib,$(rmd_source))
 
 ## CRAN mirror
 repos := https://cloud.r-project.org
@@ -41,10 +42,16 @@ check:
 	"foo <- 'bookdown' %in% installed.packages()[, 'Package'];" \
 	-e "if (! foo) install.packages('bookdown', repos = '$(repos)')" \
 
+# .PHONY: bib
+# bib: $(bib_out)
+
+# %.bib: %.aux
+#	bibexport -o $@ $<
 
 .PHONY: clean
 clean:
-	rm -rf *.aux, *.out *.log *.fls *.fdb_latexmk .Rhistory *\#* .\#* *~
+	@rm -rf *.aux *.bbl *.blg *.fls *.fdb_latexmk\
+		*.log *.out .Rhistory *\#* .\#* *~
 
 .PHONY: rmCache
 rmCache:
