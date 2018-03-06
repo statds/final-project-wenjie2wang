@@ -8,8 +8,8 @@ date: "`r format(Sys.time(), '%d %B %Y')`"
 documentclass: article
 papersize: letter
 fontsize: 11pt
-bibliography: ds.bib
-biblio-style: datalab
+bibliography: ds
+biblio-style: asa
 abstract: |
   The classical survival models, such as Cox proportional hazard model, often
   require extensive efforts on variable selection or prior medical information
@@ -76,17 +76,36 @@ The specific objectives include:
 
 # Random Forests for Survival Data
 
-Main reference includes
+Random forests (RF) proposed by @breiman2001ml is an ensemble tree method that
+introduces randomization to the base learning process. @breiman2001ml showed
+that RF may further improve the prediction performance of simple ensemble
+learning method.  @ishwaran2008aoas extended RF method to random survival
+forests (RSF) method for analysis of right-censored survival data.
 
-- @ishwaran2008aoas
+
+Other reference includes
+
+- @strobl2007bmc
 - @mogensen2012jss
 
 
 # Deep Neural Networks for Survival Data
 
-Main reference includes
+The regular Cox proportional hazards model has a linear relative risk function
+$r(\bm{x}, \bm{\beta})=\bm{\beta}^{\top}\bm{x}$. In many applications, it is
+hard to assume a linear proportional hazards condition and thus high-level
+interaction terms are required. However, as the number of covariates and
+interactions increases, it becomes prohibitively expensive.
 
-- @katzman2016arxiv
+@katzman2016arxiv proposed a Cox proportional hazards deep neural network method
+called DeepSurv for personlized treatment recommandations.  DeepSurv is a
+multi-layer perceptron that predicts a patient's risk of death. The output of
+the network is a single node estimating the relative risk function
+$\hat{r}_{\theta}$ by the weights of the network $\theta$.
+
+
+Other reference includes
+
 - @nair2010icml
 - @ioffe2015icml
 - @klambauer2017anips
