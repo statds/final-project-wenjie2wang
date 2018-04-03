@@ -1,5 +1,5 @@
 ---
-title: "Application of Random Forests and Deep Neural Networks to Survival Data"
+title: "Application of Random Forests and Deep Neural Networks to Suicide Death Data"
 subtitle: "STAT-6494 Project Proposal"
 author:
   - Wenjie Wang^[<wenjie.2.wang@uconn.edu>; Ph.D. student at
@@ -113,6 +113,110 @@ Other reference includes
 - @kingma2014arxiv
 - @nesterov2013mp
 - @Pascanu2012corr
+
+
+
+
+# Connecticut Suicide Death Data {#sec:suicide-data}
+
+Suicide is a serious public health problem in the US.  Death by suicide is
+increasing among all age groups in the US, with a 24\% increase in suicide rates
+observed from 1999 to 2014.  There is a strong likelihood that suicide
+attempters would make additional attempts after the initial suicide attempt
+\citep{suominen2004ajp}, and suicide attempt is a strong predictor of suicidal
+death \citep{bostwick2015}.
+
+
+The subjects in the suicide death data were patients in the State of Connecticut
+who have been hospitalized for suicide attempt or intentional self-injury during
+fiscal year 2005 to 2012 (from October 1, 2004 to September 30, 2012).  Data
+from diagnosis were available from the Connecticut Hospital Inpatient Discharge
+Data (HIDD). Deaths by suicide were determined from the Office of the
+Connecticut Medical Examiner (OCME). We are interested in the time since
+hospitalization due to suicide attempts to suicidal death of those patients.  A
+total of 22,221 patients were followed up until September 30, 2012.  Among them,
+16,208 (73\%) were white (9,108 female and 7,100 male) and 6,013 (27\%) were
+non-white (3,220 female and 2,793 male). The number of event (suicidal death)
+was only 606 and thus the censoring rate was about $97.3\%$.
+
+
+```{r kmcurve, echo = FALSE}
+knitr::include_graphics("figs/suicide-kmcurve.pdf")
+```
+
+
+The HIDD data contained a large number of records on the characteristics of
+patients and their previous hospital admissions. One of the research interest
+was to identify important diagnostic categories associated with patient death.
+The diagnostics were recorded as ICD-9 diagnosis codes, or more formally
+ICD-9-CM (International Classification of Diseases, 9th Revision, Clinical
+Modification). We grouped the ICD-9 codes by their three leading characters that
+define the major diagnosis categories.  Suicide attempts were identified by both
+ICD-9 external cause of injury codes and other ICD-9 code combinations
+indicative of suicidal behavior \citep{patrick2010,chenAseltine2017}.  Other
+ICD-9 codes during the inpatient hospitalization fell into 167 major diagnosis
+categories, which led to 167 indicator variables.
+
+
+## Preliminary Results
+
+We randomly split the suicide death data into a training set and a test set.
+The training set consists of 70\% of the observations and the test set consists
+of the remaining 30\%. We fitted random survival forest and DeepSurv model on
+the training set and measured the predicting power of these two methods over the
+testing set through Harrell's c-statistic \citep{harrell1996sim}, an extension
+of the area under the receiver-operator characteristics curve for censoring
+data. This statistic is an estimate of the probability of concordance between
+the order of risk scores and survival outcomes.
+
+- For random survival forest, the c-statistic of the training set and test set
+  was 0.67 and 0.75, respectively.
+- For DeepSurv model, the c-statistic of the training set and test set was 0.57
+  and 0.54, respectively.
+
+We also fitted regular Cox proportional hazard model with only the basic
+characteristics of patients, age, gender, and race, and length of
+(hospitalization) stay as covariates.
+
+- For regular Cox model, the c-statistic of the training set and test set was
+  0.73 and 0.74, respectively.
+
+
+## To-do
+
+- look into the variable importance measure from random survival forest model.
+- tune the hyperparameters for DeepSurv model.
+- do random splitting for estimating out-of-sample version of c-statistic as a
+  measure of prediction performance for these methods.
+- possibly look into a more homogenous subgroup of subjects
+- possibly try finer ICD-9 code categories, will have 4,043 indicators/counts
+  instead of 167.
+
+
+# Simulation Studies {#sec:simu-studies}
+
+## Simulation Settings {#sec:simu-settings}
+
+We considered simulating survival data with severe censoring and a large cure
+fraction. We randomly generated totally ten covariates, $x_1,\ldots,x_{10}$,
+following Uniform$(-1, 1)$ and only $x_1$ and $x_2$ were used for simulating
+event times from Weibull model. The shape and scale parameter of the Weibull
+model was set to be $1.5$ and $0.01$, respectively. The covariate coefficients
+were set to be $\beta_1 = 1$ and $\beta_2 = 2$. The censoring times were
+simulated from Uniform$(0, 10)$. An intercept term, $z_0$, and one covariate,
+$z_1$, randomly generated from Uniform$(0, 1)$ were used for simulating the cure
+indicators from the logistics model. The coefficients were both set to be $1$.
+The resulting cure rate and censoring rate was about $73.1\%$ and $85.5\%$ on
+average. Totally 1,000 simulated datasets were generated.
+
+
+- For random survival forest, the c-statistic of the training set and test set
+  was 0.74 and 0.77, respectively.
+- For DeepSurv model, the c-statistic of the training set and test set was 0.69
+  and 0.67, respectively.
+- For Cox Cure model, the c-statistic of the training set and test set
+  was 0.79 and 0.79, respectively.
+
 
 
 # Reference {-}
