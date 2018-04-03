@@ -7,14 +7,13 @@
 inDir <- "../cleanData"
 load(file.path(inDir, "dis.RData"))
 
-## create observed event or censoring times
-summary(dis$dod)
-summary(as.numeric(dis$dod - dis$adat))
-
 ## data from fiscal year 2005 to 2012
 ## from 2004/10/01 to 2012/09/30
+summary(dis$dod)
+summary(as.numeric(dis$dod - dis$adat))
 cutoff_date <- as.Date("2012-09-30", format = "%F")
 
+## create observed event or censoring times
 dis$Time <- with(dis, ifelse(is.na(dod),
                              as.numeric(cutoff_date - adat),
                              as.numeric(dod - adat)))
@@ -38,6 +37,21 @@ dat <- dis[, cov_vec]
 ## output csv file for fitting
 write.table(dat, file = file.path(inDir, "suicide.csv"),
             sep = ",", row.names = FALSE)
+
+## one training dataset and one testing dataset
+set.seed(123)
+test_ratio <- 0.3
+nSample <- nrow(dat)
+nTest <- floor(nSample * test_ratio)
+idx <- sample(nSample, nTest)
+test_dat <- dat[idx, ]
+train_dat <- dat[- idx, ]
+stopifnot(sum(train_dat$Event) > 0 && sum(test_dat$Event) > 0)
+write.table(train_dat, sep = ",", row.names = FALSE,
+            file = file.path(inDir, "train_suicide.csv"))
+write.table(test_dat, sep = ",", row.names = FALSE,
+            file = file.path(inDir, "test_suicide.csv"))
+
 
 ## random splitting and output csv files
 outDir <- "../randomSplit"
