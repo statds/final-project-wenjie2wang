@@ -1,0 +1,7 @@
+randomSplit/
+rawData/
+cleanData/
+nohup.out
+.Rhistory
+*~
+^\#*
