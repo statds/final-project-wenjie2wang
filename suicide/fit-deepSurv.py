@@ -88,7 +88,7 @@ update_fn = lasagne.updates.nesterov_momentum
 # check out http://lasagne.readthedocs.io/en/latest/modules/updates.html
 # for other optimizers to use
 
-n_epochs = 20001
+n_epochs = 10001
 
 # train the model
 metrics = model.train(train_data, test_data, n_epochs = n_epochs,
@@ -103,7 +103,7 @@ out_dir = 'fit-deepSurv'
 if not os.path.exists(out_dir):
     os.makedirs(out_dir)
 
-out_file = out_dir + '/' + str(id) + '.csv'
+out_file = out_dir + '/' + 'fit-deepSurv.csv'
 out_df = pd.DataFrame({
     'train_cStat': [metrics['c-index'][-1][1]],
     'test_cStat': [metrics['valid_c-index'][-1][1]]

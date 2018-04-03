@@ -92,7 +92,7 @@ update_fn = lasagne.updates.nesterov_momentum
 # check out http://lasagne.readthedocs.io/en/latest/modules/updates.html
 # for other optimizers to use
 
-n_epochs = 2001
+n_epochs = 10001
 
 # train the model
 metrics = model.train(train_data, test_data, n_epochs = n_epochs,
