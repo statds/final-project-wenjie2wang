@@ -1,3 +1,3 @@
-[submodule "python/DeepSurv"]
-	path = python/DeepSurv
+[submodule "simulation/DeepSurv"]
+	path = simulation/DeepSurv
 	url = https://github.com/wenjie2wang/DeepSurv.git
