@@ -5,11 +5,9 @@ The repository contains course project for STAT-6494 Data Science in Action.
 More details are coming soon.
 
 
-## Proposal
+## Progress
 
-A simple proposal is available for preview at [here][proposal].
-
-
+The latest progress is available for preview at [here][report].
 
 
-[proposal]: https://statds.github.io/final-project-wenjie_wang/proposal.pdf
+[report]: https://statds.github.io/final-project-wenjie_wang/report_wenjie.pdf
