@@ -118,3 +118,55 @@ summarize_rsf <- function(fit, pred)
     c(train_cStat = 1 - fit$err.rate[nTree],
       test_cStat = 1 - pred$err.rate[nTree])
 }
+
+
+##' Harrel's c-statistics for cure model
+##'
+##' This function computes the Harrel's c-statistics for cure model proposed by
+##' Asano and Hirakawa (2017).
+##'
+##' @param time event times or censoring times.
+##' @param status event indicators.
+##' @param risk estimated risk score from the fitted model.
+##' @param cure estimated cure probability from the fitted model.
+##'
+##' @references
+##'
+##' Asano, J., & Hirakawa, A. (2017). Assessing the prediction accuracy of a
+##' cure model for censored survival data with long-term survivors: Application
+##' to breast cancer data. \emph{Journal of biopharmaceutical statistics},
+##' 27(6), 918--932.
+##'
+harrel_cure <- function(time, status, riskScore, cureScore = NULL, ...)
+{
+    ## sort all the input vectors by time increasingly
+    sortIdx <- order(time)
+    y <- time[sortIdx]
+    delta <- status[sortIdx]
+    srisk <- riskScore[sortIdx]
+    scure <- if (is.null(cureScore))
+                 Inf
+             else
+                 cureScore[sortIdx]
+    prob_cure <- ifelse(delta > 0, 1, quasibinomial()[["linkinv"]](scure))
+    numSub <- length(y)
+    seq_numSub <- seq_len(numSub)
+    idx <- which(delta > 0)
+    ## for each event, find its comparable pair
+    numComparable <- numConcordant <- numTied <- tiedTime <- 0
+    for (i in idx) {
+        tmpIdx <- seq_numSub[- seq_len(i)]
+        noTiedTime <- y[tmpIdx] > y[i] | delta[tmpIdx] == 0
+        ## incomparable pairs
+        tiedTime <- tiedTime + sum(y[tmpIdx] == y[i] & delta[tmpIdx] == 1)
+        numComparable <- numComparable + sum(noTiedTime * prob_cure[tmpIdx])
+        idx1 <- srisk[tmpIdx] < srisk[i]
+        idx2 <- srisk[tmpIdx] == srisk[i]
+        numConcordant <- numConcordant + sum(idx1 * noTiedTime * prob_cure[tmpIdx])
+        numTied <- numTied + sum(idx2 * prob_cure[tmpIdx])
+    }
+    setNames(c((numConcordant + numTied / 2) / numComparable,
+               numComparable, numConcordant, numTied, tiedTime),
+             c("cScore", "comparable", "concordant",
+               "tiedRisk", "tiedTime"))
+}
