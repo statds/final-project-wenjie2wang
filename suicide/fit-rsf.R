@@ -24,4 +24,4 @@ pred_rsf <- predict.rfsrc(fit_rsf, newdata = testDat, outcome = "test")
 ## save as RData files
 outDir <- "fits"
 if (! dir.exists(outDir)) dir.create(outDir)
-save(fit_rsf, pred_rsf, file = file.path(outDir, "fit-rsf.RData")))
+save(fit_rsf, pred_rsf, file = file.path(outDir, "fit-rsf.RData"))
