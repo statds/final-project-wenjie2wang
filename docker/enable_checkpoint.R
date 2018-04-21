@@ -7,7 +7,7 @@
 snapshot_date = "2018-04-13"
 
 ## install checkpoint v0.4.3 if not installed
-if (! suppressWarnings(require(checkpoint, quietly = TRUE)) ||
+if (! suppressMessages(suppressWarnings(require(checkpoint))) ||
     packageVersion("checkpoint") != "0.4.3") {
     ## specify the checkpoint package version
     checkpoint_version <- "checkpoint_0.4.3.tar.gz"
