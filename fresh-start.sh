@@ -13,7 +13,7 @@ git submodule update --recursive
 Rscript -e "try(remove.packages('checkpoint'), silent = TRUE)" &> /dev/null
 rm -rf ~/.checkpoint
 mkdir ~/.checkpoint
-./enable_checkpoint.R
+./docker/enable_checkpoint.R
 
 ## check the version of Python modules and R packages
 cd docker/
