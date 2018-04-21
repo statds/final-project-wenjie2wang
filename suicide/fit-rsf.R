@@ -10,7 +10,7 @@
 ## source functions and packages
 library(methods)
 source("../simulation/simu-fun.R")
-need.packages("randomForestSRC")
+library("randomForestSRC")
 
 ## read in simulated datasets as the train data and the test data
 inDir <- "../cleanData"

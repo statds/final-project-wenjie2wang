@@ -11,7 +11,7 @@ trainID <- as.integer(inArgs[1L])
 ## source functions and packages
 library(methods)
 source("simu-fun.R")
-need.packages("randomForestSRC")
+library("randomForestSRC")
 
 ## read in simulated datasets as the train data and the test data
 testID <- ifelse(trainID == 1L, 1000L, trainID - 1L)
