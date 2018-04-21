@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 ## only using one core for testing
 limit=1
 count=0

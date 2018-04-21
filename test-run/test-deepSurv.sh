@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 limit=1
 count=0
 
