@@ -1,5 +1,7 @@
 #!/usr/bin/Rscript --vanilla
 
+### NOTE: this script should be called from project root directory for the
+### first time
 
 ## define snapshot date
 snapshot_date = "2018-04-13"
