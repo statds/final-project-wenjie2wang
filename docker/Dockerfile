@@ -180,11 +180,11 @@ RUN pip3 --no-cache-dir install \
 ## install Theano and set up Theano config (.theanorc) OpenBLAS
 RUN pip3 --no-cache-dir install \
     git+https://github.com/Theano/Theano.git@${THEANO_VERSION} && \
-	echo "[global]\ndevice=cpu\nfloatX=float32\nmode=FAST_RUN \
-		\n[lib]\ncnmem=0.95 \
-		\n[nvcc]\nfastmath=True \
-		\n[blas]\nldflag = -L/usr/lib/openblas-base -lopenblas \
-		\n[DebugMode]\ncheck_finite=1" \
+	 printf "[global]\ndevice=cpu\nfloatX=float32\nmode=FAST_RUN \
+                 \n[lib]\ncnmem=0.95 \
+                 \n[nvcc]\nfastmath=True \
+                 \n[blas]\nldflags=-L/usr/lib/openblas-base -lblas \
+	         \n[DebugMode]\ncheck_finite=1" \
 	> /root/.theanorc
 
 ## install Lasagne
