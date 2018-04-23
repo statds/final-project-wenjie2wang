@@ -110,8 +110,6 @@ need.packages <- function(pkg, ...)
 
 
 ##' Summarize Simulation Outputs from Random Survival Forest Model
-##'
-##' FIXME
 summarize_rsf <- function(fit, pred)
 {
     nTree <- fit$ntree
