@@ -4,5 +4,8 @@ rawData/
 cleanData/
 nohup.out
 .Rhistory
+*.log
+*logs/
+*.RData
 *~
 ^\#*
