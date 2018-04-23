@@ -37,6 +37,10 @@ deepSurv: $(test_deepSurv)
 $(test_deepSurv): test-deepSurv.py
 	@bash test-deepSurv.sh
 
+.PHONY: Tensorboard
+Tensorboard:
+	tensorboard --logdir deepSurv_logs/tensorboard/ &> /dev/null
+
 .PHONY: clean
 clean:
 	@rm -rf deepSurv_logs/ test-data/ test-coxCure/ test-rsf/ test-deepSurv/
