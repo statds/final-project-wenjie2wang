@@ -9,9 +9,10 @@ inArgs <- commandArgs(trailingOnly = TRUE)
 trainID <- as.integer(inArgs[1L])
 
 ## source functions and packages
+source("../docker/enable_checkpoint.R")
 library(methods)
 source("simu-fun.R")
-library("randomForestSRC")
+suppressMessages(library("randomForestSRC"))
 
 ## read in simulated datasets as the train data and the test data
 testID <- ifelse(trainID == 1L, 1000L, trainID - 1L)

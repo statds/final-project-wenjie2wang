@@ -1,6 +1,7 @@
 #!/bin/bash
 
-limit=3
+## using four cores here
+limit=4
 count=0
 
 echo "[$(date)]: simulation started."

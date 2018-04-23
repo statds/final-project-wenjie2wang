@@ -13,7 +13,7 @@ else:
     test_id = train_id - 1
 
 # import module deep_surv and other modules
-sys.path.append('DeepSurv/deepsurv')
+sys.path.append('../DeepSurv/deepsurv')
 import deep_surv
 from deepsurv_logger import DeepSurvLogger, TensorboardLogger
 import utils
@@ -32,8 +32,16 @@ import lasagne
 in_dir = 'simu-data/'
 train_dataset_fp = in_dir + str(train_id) + '.csv'
 test_dataset_fp = in_dir + str(test_id) + '.csv'
-train_df = pd.read_csv(train_dataset_fp)
+all_train_df = pd.read_csv(train_dataset_fp)
 test_df = pd.read_csv(test_dataset_fp)
+
+# split all training data into training set and validation set
+np.random.seed(1216)
+n_train = all_train_df.shape[0]
+train_ind = np.random.choice(n_train, int(n_train * 0.8), replace = False)
+valid_ind = pd.Int64Index(np.arange(n_train)).difference(train_ind)
+train_df = all_train_df.iloc[train_ind]
+valid_df = all_train_df.iloc[valid_ind]
 
 
 # Transform the dataset to "DeepSurv" format
@@ -63,6 +71,7 @@ def dataframe_to_deepsurv_ds(df, event_col = 'Event', time_col = 'Time'):
 
 # prepared training dataset
 train_data = dataframe_to_deepsurv_ds(train_df)
+valid_data = dataframe_to_deepsurv_ds(valid_df)
 test_data = dataframe_to_deepsurv_ds(test_df)
 
 
@@ -81,7 +90,7 @@ hyperparams = {
 
 # enable tensorboard
 experiment_name = 'test_experiment_sebastian'
-logdir = 'logs/tensorboard/'
+logdir = 'deepSurv_logs/tensorboard/'
 logger = TensorboardLogger(experiment_name, logdir = logdir)
 
 # create an instance of DeepSurv using the hyperparams defined above
@@ -92,15 +101,21 @@ update_fn = lasagne.updates.nesterov_momentum
 # check out http://lasagne.readthedocs.io/en/latest/modules/updates.html
 # for other optimizers to use
 
-n_epochs = 10001
+n_epochs = 10000
 
 # train the model
 metrics = model.train(train_data, test_data, n_epochs = n_epochs,
                       logger = logger, update_fn = update_fn)
 
+# resulting c-statistics / c-index
+train_ci = metrics['c-index'][-1][1]
+valid_ci = metrics['valid_c-index'][-1][1]
+test_ci = model.get_concordance_index(**test_data)
+
 # Print the final metrics
-print('Train C-Index:', metrics['c-index'][-1])
-print('Test C-Index:', metrics['valid_c-index'][-1])
+print('Training C-Index:', np.round(train_ci, 4))
+print('Validation C-Index:', np.round(valid_ci, 4))
+print('Testing C-Index:', np.round(test_ci, 4))
 
 # save the results to csv files
 out_dir = 'fit-deepSurv'
@@ -109,7 +124,8 @@ if not os.path.exists(out_dir):
 
 out_file = out_dir + '/' + str(train_id) + '.csv'
 out_df = pd.DataFrame({
-    'train_cStat': [metrics['c-index'][-1][1]],
-    'test_cStat': [metrics['valid_c-index'][-1][1]]
+    'train_cStat': [train_ci],
+    'validation_cStat': [valid_ci],
+    'test_cStat': [test_ci]
 })
 out_df.to_csv(out_file, index = False)

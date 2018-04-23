@@ -9,6 +9,7 @@ inArgs <- commandArgs(trailingOnly = TRUE)
 trainID <- as.integer(inArgs[1L])
 
 ## source functions and packages
+source("../docker/enable_checkpoint.R")
 library(methods)
 source("simu-fun.R")
 library("smcure")
@@ -19,7 +20,7 @@ library("smcure")
 inDir <- "simu-data"
 trainDat <- read.csv(file.path(inDir, paste0(trainID, ".csv")))
 ## testDat <- read.csv(file.path(inDir, paste0(testID, ".csv")))
-oneFit <- smcure(Surv(Time, Event) ~ x1 + x2, cureform = ~ z2,
+oneFit <- smcure(Surv(Time, Event) ~ x1 + x2, cureform = ~ z1,
                  data = trainDat, model = "ph", Var = FALSE)
 
 ## define output names
