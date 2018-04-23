@@ -1,7 +1,8 @@
-test_data := test-data/1.csv test-data/2.csv
-test_coxCure := test-coxCure/1.RData test-coxCure/2.RData
-test_rsf := test-rsf/1.RData test-rsf/2.RData
-test_deepSurv := test-deepSurv/1.csv
+iter := {1..2}
+test_data := test-data/$(iter).csv
+test_coxCure := test-coxCure/$(iter).RData
+test_rsf := test-rsf/$(iter).RData
+test_deepSurv := test-deepSurv/$(iter).csv
 
 
 ## test all and do cleaning
@@ -15,26 +16,26 @@ test: data coxCure rsf deepSurv
 .PHONY: data
 data: $(test_data)
 
-$(test_data): test-data.R
+$(test_data): test-data.R ../simulation/simu-fun.R
 	@./$<
-	@printf "[$$(date)]: Testing data were generated.\n\n"
+	@printf "[$$(date)]: Testing data were generated.\n"
 
 .PHONY: coxCure
 coxCure: $(test_coxCure)
 
-$(test_coxCure): test-coxCure.R
+$(test_coxCure): test-coxCure.R test-coxCure.sh
 	@bash test-coxCure.sh
 
 .PHONY: rsf
 rsf: $(test_rsf)
 
-$(test_rsf): test-rsf.R
+$(test_rsf): test-rsf.R test-rsf.sh
 	@bash test-rsf.sh
 
 .PHONY: deepSurv
 deepSurv: $(test_deepSurv)
 
-$(test_deepSurv): test-deepSurv.py
+$(test_deepSurv): test-deepSurv.py test-deepSurv.sh
 	@bash test-deepSurv.sh
 
 .PHONY: Tensorboard
@@ -44,4 +45,4 @@ Tensorboard:
 .PHONY: clean
 clean:
 	@rm -rf deepSurv_logs/ test-data/ test-coxCure/ test-rsf/ test-deepSurv/
-	@printf "[$$(date)]: Cleaned all logs and testing results.\n\n"
+	@printf "[$$(date)]: Cleaned all logs and testing results.\n"
