@@ -2,11 +2,13 @@
 
 set -e
 
-limit=1
+## using two cores here
+## decrease the `limit` to `1` for using a single core
+limit=2
 count=0
 
 echo "[$(date)]: testing DeepSurv started."
-for ((process = 1; process < 2; process++))
+for ((process = 1; process < 3; process++))
 do
     python3 test-deepSurv.py $process &
     count=$(($count + 1))
