@@ -1,4 +1,4 @@
-## Getting startted
+## Getting started
 
 Let's first pull the docker image from docker hub. The size of compressed
 files is about 1 GB and the extracted image will take about 3 GB.
