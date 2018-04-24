@@ -1,0 +1,175 @@
+---
+title: "Application of Random Forests and Deep Neural Networks to Suicide Death Data"
+author: |
+  | Wenjie Wang
+  | Department of Statistics, UConn
+date: April 24, 2018
+bibliography: ds.bib
+---
+
+
+```{r setup, echo = FALSE}
+options(width = 100)
+
+### other simple utility functions
+## create a tag with some handy defaults
+a_new <- function(x, href = x, target = "_blank", ...) {
+    htmltools::tags$a(x, href = href, target = target, ...)
+}
+## paste with forward slash
+paste4 <- function(...) paste(..., sep = "/")
+
+### define some constants
+dockerhub <- "https://hub.docker.com"
+```
+
+
+
+## Outline
+
+- Introduction
+  - motivation
+  - data
+- Methods
+  - random survival forest
+  - deep neural network
+- Findings
+- Future Work
+- Reproducibility with Docker
+
+## Introduction
+
+- Medical researchers' interests often lie in estimating treatment effects and
+  discovery of important diagnosis covariates of patients.
+- classical survival models (e.g., Cox PH model)
+  - simply assumes linear risk function
+  - require extensive efforts on variable selection to model interaction
+- "State-of-the-art" models allows nonlinear risk function and are able to
+  model high-order interaction terms.
+   - deep neural networks [@katzman2016arxiv]
+   - random survival forests [@ishwaran2008aoas]
+
+## CT Suicide Death Data
+
+- The subjects in the CT suicide death data were patients who have been
+  hospitalized for suicide attempt or intentional self-injury during
+  fiscal year 2005 to 2012.
+
+- A total of 22,221 patients were followed up until September 30, 2012.  Among
+  them, 16,208 (73\%) were white (9,108 female and 7,100 male) and 6,013
+  (27\%) were non-white (3,220 female and 2,793 male). The number of event
+  (suicidal death) was only 606 and thus the censoring rate was about 97.3\%.
+
+- We are interested in the time since hospitalization due to suicide attempts
+  to suicidal death of those patients.
+
+
+---
+
+```{r kmcurve, echo = FALSE}
+knitr::include_graphics("www/img/suicide-kmcurve.png")
+```
+
+---
+
+## Random Survival Forest (RSF)
+
+- @ishwaran2008aoas extended random forest method [@breiman2001ml] to random
+  survival forests (RSF) method for analysis of right-censored survival data.
+  1. draw $B$ bootstrap samples from the origin data
+  2. grow a survival tree with randomly selecting $p$ candidate covariates at
+     each node and maximizing survival difference between daughter nodes
+  3. each terminal node: no less than $d_0 > 0$ unique deaths
+  4. compute cumulative hazard function (CHF) for each tree and average to
+     obtain the ensemble CHF
+  5. compute prediction error using out-of-bag data
+- existing implementation in R: **randomForestSRC**
+
+
+## Deep Neural Network (DeepSurv)
+
+- @katzman2016arxiv proposed a Cox proportional hazards deep neural network
+  method called *DeepSurv*, a multi-layer perceptron predicting event risk.
+- The loss function is set to be the negative log partial likelihood
+  [@cox1975biometrika].
+- allows more than one layer and outputs a single node estimating the relative
+  risk function $\hat{r}_{\theta}$ by the weights of the network $\theta$
+- weight decay (L2-norm) regularization, Rectified Linear Units (ReLU) with
+  batch normalization [@ioffe2015icml], dropout [@srivastava2014jmlr], etc.
+- existing implementation in Python: **DeepSurv**
+
+
+## Application to CT suicide data
+
+- estimated prediction performance with Harrell's concordance index
+  [@harrell1996sim] with 200 random splits
+- @ishwaran2010jasa proposed an algorithm named "RSF-Variable Hunting" for
+  high-dimensional variable selection for survival data.
+
+
+## Prediction Performance
+
+```{r boxplot-c-index, echo = FALSE}
+knitr::include_graphics("www/img/boxplot_c-index.png")
+```
+
+## Important Covaraites
+
+- gender (male vs. female)
+- race (white vs. non-white)
+- ICD-9 categories:
+  - 874: open wound of neck
+  - 881: open wound of elbow forearm and wrist
+  - 304: drug dependence
+  - 303: alcohol dependence syndrome
+  - 965: poisoning by analgesics antipyretics and antirheumatics
+  - ...
+
+## Future Work
+
+- turn the hyperparameters for deep neural network model with random
+  hyper-parameter optimization search [@bergstra2012jmlr]
+- @dazard2018sagmb proposed a RSF-based pairwise interaction estimator to
+  reveal pairwise interaction-effects.
+  - R package named `r a_new("IRSF", "https://github.com/jedazard/IRSF")`
+    under development at GitHub
+- ...
+
+
+## Reproducibility with Docker
+
+- `r a_new("Docker", "https://www.docker.com")` is a platform that allows you
+  to "build, ship, run any app, anywhere".
+  - initially released as open source in March 2013
+
+>- Docker containers vs. Virtual Machines (VMs)
+   </br><img src="www/img/docker_vs_vm.png" alt="docker_vs_vm" style="width: 800px;"/>
+
+
+## Docker image
+
+- A Docker image for this project is publicly available at Docker Hub:
+  `r a_new("https://hub.docker.com/r/wenjie2wang/statds-spring2018/")`
+
+- pull it by the following command
+
+```bash
+$ docker pull wenjie2wang/statds-spring2018
+```
+
+- We may run the docker image as a docker container
+
+```bash
+$ docker run -it -p 6006:6006 --rm wenjie2wang/statds-spring2018:latest
+```
+
+- Demo
+
+
+## Thanks
+
+- Source repository on GitHub:
+  https://github.com/wenjie2wang/statds-spring2018
+
+
+## Reference {.scrollable-slide}
