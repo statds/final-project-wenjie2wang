@@ -193,31 +193,5 @@ characteristics of patients, age, gender, and race, and length of
   instead of 167.
 
 
-# Simulation Studies {#sec:simu-studies}
-
-## Simulation Settings {#sec:simu-settings}
-
-We considered simulating survival data with severe censoring and a large cure
-fraction. We randomly generated totally ten covariates, $x_1,\ldots,x_{10}$,
-following Uniform$(-1, 1)$ and only $x_1$ and $x_2$ were used for simulating
-event times from Weibull model. The shape and scale parameter of the Weibull
-model was set to be $1.5$ and $0.01$, respectively. The covariate coefficients
-were set to be $\beta_1 = 1$ and $\beta_2 = 2$. The censoring times were
-simulated from Uniform$(0, 10)$. An intercept term, $z_0$, and one covariate,
-$z_1$, randomly generated from Uniform$(0, 1)$ were used for simulating the cure
-indicators from the logistics model. The coefficients were both set to be $1$.
-The resulting cure rate and censoring rate was about $73.1\%$ and $85.5\%$ on
-average. Totally 1,000 simulated datasets were generated.
-
-
-- For random survival forest, the c-statistic of the training set and test set
-  was 0.74 and 0.77, respectively.
-- For DeepSurv model, the c-statistic of the training set and test set was 0.69
-  and 0.67, respectively.
-- For Cox Cure model, the c-statistic of the training set and test set
-  was 0.79 and 0.79, respectively.
-
-
-
 # Reference {-}
 
