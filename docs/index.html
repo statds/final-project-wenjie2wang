@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="dcterms.date" content="2018-04-24" />
+  <title>Application of Random Forests and Deep Neural Networks to Suicide Death Data</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="index_files/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="index_files/reveal.js-3.3.0.1/css/theme/white.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="www/css/styles.css"/>
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}  
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+    
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">Application of Random Forests and Deep Neural Networks to Suicide Death Data</h1>
+    <h2 class="author"><div class="line-block">Wenjie Wang<br />
+Department of Statistics, UConn</div></h2>
+    <h3 class="date">April 24, 2018</h3>
+</section>
+
+<section id="outline" class="slide level2">
+<h2>Outline</h2>
+<ul>
+<li>Introduction
+<ul>
+<li>motivation</li>
+<li>data</li>
+</ul></li>
+<li>Methods
+<ul>
+<li>random survival forest</li>
+<li>deep neural network</li>
+</ul></li>
+<li>Findings</li>
+<li>Future Work</li>
+<li>Reproducibility with Docker</li>
+</ul>
+</section>
+<section id="introduction" class="slide level2">
+<h2>Introduction</h2>
+<ul>
+<li>Medical researchers’ interests often lie in estimating treatment effects and discovery of important diagnosis covariates of patients.</li>
+<li>classical survival models (e.g., Cox PH model)
+<ul>
+<li>simply assumes linear risk function</li>
+<li>require extensive efforts on variable selection to model interaction</li>
+</ul></li>
+<li>“State-of-the-art” models allows nonlinear risk function and are able to model high-order interaction terms.
+<ul>
+<li>deep neural networks <span class="citation" data-cites="katzman2016arxiv">(Katzman et al. 2016)</span></li>
+<li>random survival forests <span class="citation" data-cites="ishwaran2008aoas">(Ishwaran et al. 2008)</span></li>
+</ul></li>
+</ul>
+</section>
+<section id="ct-suicide-death-data" class="slide level2">
+<h2>CT Suicide Death Data</h2>
+<ul>
+<li><p>The subjects in the CT suicide death data were patients who have been hospitalized for suicide attempt or intentional self-injury during fiscal year 2005 to 2012.</p></li>
+<li><p>A total of 22,221 patients were followed up until September 30, 2012. Among them, 16,208 (73%) were white (9,108 female and 7,100 male) and 6,013 (27%) were non-white (3,220 female and 2,793 male). The number of event (suicidal death) was only 606 and thus the censoring rate was about 97.3%.</p></li>
+<li><p>We are interested in the time since hospitalization due to suicide attempts to suicidal death of those patients.</p></li>
+</ul>
+</section>
+<section class="slide level2">
+
+<p><img data-src="www/img/suicide-kmcurve.png" /><!-- --></p>
+</section>
+<section id="random-survival-forest-rsf" class="slide level2">
+<h2>Random Survival Forest (RSF)</h2>
+<ul>
+<li><span class="citation" data-cites="ishwaran2008aoas">Ishwaran et al. (2008)</span> extended random forest method <span class="citation" data-cites="breiman2001ml">(Breiman 2001)</span> to random survival forests (RSF) method for analysis of right-censored survival data.
+<ol type="1">
+<li>draw <span class="math inline">\(B\)</span> bootstrap samples from the origin data</li>
+<li>grow a survival tree with randomly selecting <span class="math inline">\(p\)</span> candidate covariates at each node and maximizing survival difference between daughter nodes</li>
+<li>each terminal node: no less than <span class="math inline">\(d_0 &gt; 0\)</span> unique deaths</li>
+<li>compute cumulative hazard function (CHF) for each tree and average to obtain the ensemble CHF</li>
+<li>compute prediction error using out-of-bag data</li>
+</ol></li>
+<li>existing implementation in R: <strong>randomForestSRC</strong></li>
+</ul>
+</section>
+<section id="deep-neural-network-deepsurv" class="slide level2">
+<h2>Deep Neural Network (DeepSurv)</h2>
+<ul>
+<li><span class="citation" data-cites="katzman2016arxiv">Katzman et al. (2016)</span> proposed a Cox proportional hazards deep neural network method called <em>DeepSurv</em>, a multi-layer perceptron predicting event risk.</li>
+<li>The loss function is set to be the negative log partial likelihood <span class="citation" data-cites="cox1975biometrika">(Cox 1975)</span>.</li>
+<li>allows more than one layer and outputs a single node estimating the relative risk function <span class="math inline">\(\hat{r}_{\theta}\)</span> by the weights of the network <span class="math inline">\(\theta\)</span></li>
+<li>weight decay (L2-norm) regularization, Rectified Linear Units (ReLU) with batch normalization <span class="citation" data-cites="ioffe2015icml">(Ioffe and Szegedy 2015)</span>, dropout <span class="citation" data-cites="srivastava2014jmlr">(Srivastava et al. 2014)</span>, etc.</li>
+<li>existing implementation in Python: <strong>DeepSurv</strong></li>
+</ul>
+</section>
+<section id="application-to-ct-suicide-data" class="slide level2">
+<h2>Application to CT suicide data</h2>
+<ul>
+<li>estimated prediction performance with Harrell’s concordance index <span class="citation" data-cites="harrell1996sim">(Harrell, Lee, and Mark 1996)</span> with 200 random splits</li>
+<li><span class="citation" data-cites="ishwaran2010jasa">Ishwaran et al. (2010)</span> proposed an algorithm named “RSF-Variable Hunting” for high-dimensional variable selection for survival data.</li>
+</ul>
+</section>
+<section id="prediction-performance" class="slide level2">
+<h2>Prediction Performance</h2>
+<p><img data-src="www/img/boxplot_c-index.png" /><!-- --></p>
+</section>
+<section id="important-covaraites" class="slide level2">
+<h2>Important Covaraites</h2>
+<ul>
+<li>gender (male vs. female)</li>
+<li>race (white vs. non-white)</li>
+<li>ICD-9 categories:
+<ul>
+<li>874: open wound of neck</li>
+<li>881: open wound of elbow forearm and wrist</li>
+<li>304: drug dependence</li>
+<li>303: alcohol dependence syndrome</li>
+<li>965: poisoning by analgesics antipyretics and antirheumatics</li>
+<li>…</li>
+</ul></li>
+</ul>
+</section>
+<section id="future-work" class="slide level2">
+<h2>Future Work</h2>
+<ul>
+<li>turn the hyperparameters for deep neural network model with random hyper-parameter optimization search <span class="citation" data-cites="bergstra2012jmlr">(Bergstra and Bengio 2012)</span></li>
+<li><span class="citation" data-cites="dazard2018sagmb">Dazard et al. (2018)</span> proposed a RSF-based pairwise interaction estimator to reveal pairwise interaction-effects.
+<ul>
+<li>R package named <a href="https://github.com/jedazard/IRSF" target="_blank">IRSF</a> under development at GitHub</li>
+</ul></li>
+<li>…</li>
+</ul>
+</section>
+<section id="reproducibility-with-docker" class="slide level2">
+<h2>Reproducibility with Docker</h2>
+<ul>
+<li><a href="https://www.docker.com" target="_blank">Docker</a> is a platform that allows you to “build, ship, run any app, anywhere”.
+<ul>
+<li>initially released as open source in March 2013</li>
+</ul></li>
+</ul>
+<ul>
+<li class="fragment">Docker containers vs. Virtual Machines (VMs) </br><img src="www/img/docker_vs_vm.png" alt="docker_vs_vm" style="width: 800px;"/></li>
+</ul>
+</section>
+<section id="docker-image" class="slide level2">
+<h2>Docker image</h2>
+<ul>
+<li><p>A Docker image for this project is publicly available at Docker Hub: <a href="https://hub.docker.com/r/wenjie2wang/statds-spring2018/" target="_blank">https://hub.docker.com/r/wenjie2wang/statds-spring2018/</a></p></li>
+<li><p>pull it by the following command</p></li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb1-1" data-line-number="1">$ <span class="ex">docker</span> pull wenjie2wang/statds-spring2018</a></code></pre></div>
+<ul>
+<li>We may run the docker image as a docker container</li>
+</ul>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" data-line-number="1">$ <span class="ex">docker</span> run -it -p 6006:6006 --rm wenjie2wang/statds-spring2018:latest</a></code></pre></div>
+<ul>
+<li>Demo</li>
+</ul>
+</section>
+<section id="thanks" class="slide level2">
+<h2>Thanks</h2>
+<ul>
+<li>Source repository on GitHub: <a href="https://github.com/wenjie2wang/statds-spring2018" class="uri">https://github.com/wenjie2wang/statds-spring2018</a></li>
+</ul>
+</section>
+<section id="reference" class="slide level2 unnumbered scrollable-slide">
+<h2>Reference</h2>
+<div id="refs" class="references">
+<div id="ref-bergstra2012jmlr">
+<p>Bergstra, James, and Yoshua Bengio. 2012. “Random Search for Hyper-Parameter Optimization.” <em>Journal of Machine Learning Research</em> 13 (Feb):281–305.</p>
+</div>
+<div id="ref-breiman2001ml">
+<p>Breiman, Leo. 2001. “Random Forests.” <em>Machine Learning</em> 45 (1):5–32. <a href="https://doi.org/10.1023/A:1010933404324" class="uri">https://doi.org/10.1023/A:1010933404324</a>.</p>
+</div>
+<div id="ref-cox1975biometrika">
+<p>Cox, David R. 1975. “Partial Likelihood.” <em>Biometrika</em> 62 (2). Biometrika Trust:269–76.</p>
+</div>
+<div id="ref-dazard2018sagmb">
+<p>Dazard, Jean-Eudes, Hemant Ishwaran, Rajeev Mehlotra, Aaron Weinberg, and Peter Zimmerman. 2018. “Ensemble Survival Tree Models to Reveal Pairwise Interactions of Variables with Time-to-Events Outcomes in Low-Dimensional Setting.” <em>Statistical Applications in Genetics and Molecular Biology</em> 17 (1).</p>
+</div>
+<div id="ref-harrell1996sim">
+<p>Harrell, Frank E, Kerry L Lee, and Daniel B Mark. 1996. “Multivariable Prognostic Models: Issues in Developing Models, Evaluating Assumptions and Adequacy, and Measuring and Reducing Errors.” <em>Statistics in Medicine</em> 15 (4). Wiley Online Library:361–87.</p>
+</div>
+<div id="ref-ioffe2015icml">
+<p>Ioffe, Sergey, and Christian Szegedy. 2015. “Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift.” In <em>International Conference on Machine Learning</em>, 448–56.</p>
+</div>
+<div id="ref-ishwaran2008aoas">
+<p>Ishwaran, Hemant, Udaya B. Kogalur, Eugene H. Blackstone, and Michael S. Lauer. 2008. “Random Survival Forests.” <em>The Annals of Applied Statistics</em>. JSTOR, 841–60.</p>
+</div>
+<div id="ref-ishwaran2010jasa">
+<p>Ishwaran, Hemant, Udaya B Kogalur, Eiran Z Gorodeski, Andy J Minn, and Michael S Lauer. 2010. “High-Dimensional Variable Selection for Survival Data.” <em>Journal of the American Statistical Association</em> 105 (489). Taylor &amp; Francis:205–17.</p>
+</div>
+<div id="ref-katzman2016arxiv">
+<p>Katzman, J., U. Shaham, J. Bates, A. Cloninger, T. Jiang, and Y. Kluger. 2016. “DeepSurv: Personalized Treatment Recommender System Using a Cox Proportional Hazards Deep Neural Network.” <em>ArXiv E-Prints</em>, June.</p>
+</div>
+<div id="ref-srivastava2014jmlr">
+<p>Srivastava, Nitish, Geoffrey Hinton, Alex Krizhevsky, Ilya Sutskever, and Ruslan Salakhutdinov. 2014. “Dropout: A Simple Way to Prevent Neural Networks from Overfitting.” <em>The Journal of Machine Learning Research</em> 15 (1). JMLR. org:1929–58.</p>
+</div>
+</div>
+</section>
+    </div>
+  </div>
+
+  <script src="index_files/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="index_files/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: false,
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+<script src="www/js/highlight_comments.js"></script>
+
+  </body>
+</html>
