@@ -1,6 +1,6 @@
 #!/bin/bash
 
-## using three cores here
+## using four cores here
 limit=4
 count=0
 
