@@ -5,13 +5,9 @@ test_rsf := test-rsf/$(iter).RData
 test_deepSurv := test-deepSurv/$(iter).csv
 
 
-## test all and do cleaning
-.PHONY: all
-all: data coxCure rsf deepSurv clean
-
 ## test all but not do cleaning
-.PHONY: test
-test: data coxCure rsf deepSurv
+.PHONY: all
+all: coxCure rsf deepSurv
 
 .PHONY: data
 data: $(test_data)
@@ -23,19 +19,19 @@ $(test_data): test-data.R ../simulation/simu-fun.R
 .PHONY: coxCure
 coxCure: $(test_coxCure)
 
-$(test_coxCure): test-coxCure.R test-coxCure.sh
+$(test_coxCure): test-coxCure.R test-coxCure.sh $(test_data)
 	@bash test-coxCure.sh
 
 .PHONY: rsf
 rsf: $(test_rsf)
 
-$(test_rsf): test-rsf.R test-rsf.sh
+$(test_rsf): test-rsf.R test-rsf.sh $(test_data)
 	@bash test-rsf.sh
 
 .PHONY: deepSurv
 deepSurv: $(test_deepSurv)
 
-$(test_deepSurv): test-deepSurv.py test-deepSurv.sh
+$(test_deepSurv): test-deepSurv.py test-deepSurv.sh $(test_data)
 	@bash test-deepSurv.sh
 
 .PHONY: Tensorboard
