@@ -115,10 +115,12 @@ knitr::include_graphics("www/img/boxplot_c-index.png")
 
 ## Important Covaraites
 
+- length of stay
+- age
 - gender (male vs. female)
 - race (white vs. non-white)
 - ICD-9 categories:
-  - 874: open wound of neck
+  - 305: nondependent abuse of drugs
   - 881: open wound of elbow forearm and wrist
   - 304: drug dependence
   - 303: alcohol dependence syndrome

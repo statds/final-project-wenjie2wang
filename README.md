@@ -4,7 +4,7 @@ This repository contains all the source code and results for the course
 project of *STAT-6494 Data Science in Action* in Spring 2018.
 
 - The presentation [slides][slides] and final project [report][report] are
-  placed under the `docs/` directory (and hosted online using *GitHub pages*).
+  placed under the `docs/` directory.
 
 - A Docker image is available at [Docker Hub][docker-image] for providing
   reproducibility and a working computing environment.

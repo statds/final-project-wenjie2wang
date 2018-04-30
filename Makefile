@@ -27,12 +27,13 @@ dep_pkgs := c(\"revealjs\", \"bookdown\")
 
 
 .PHONY: all
-all: $(slides_out)
+all: $(pdf_out) $(html_out) $(slides_out)
+
 
 .PHONY: pdf
 pdf: $(pdf_out)
 
-%.pdf: %.Rmd _output.yml $(preamble)
+$(pdf_out): $(rmd_source) _output.yml $(preamble)
 	@make -s check
 	@echo "compiling to pdf file..."
 	@Rscript --vanilla -e \
@@ -43,14 +44,13 @@ pdf: $(pdf_out)
 .PHONY: html
 html: $(html_out)
 
-%.html: %.Rmd _output.yml
+$(html_out): $(rmd_source) _output.yml
 	@make -s check
 	@echo "compiling to html file..."
 	@Rscript --vanilla -e \
 	"rmarkdown::render('$<', 'bookdown::html_document2')"
 	@mv $(tmp_html_out) docs/
-	@rm -rf docs/$(tmp_files)
-	@mv $(tmp_files) docs/
+
 
 .PHONY: slides
 slides: $(slides_out)
@@ -63,6 +63,7 @@ $(slides_out): $(slides_source)
 	@mv $(tmp_slides_out) docs
 	@rm -rf docs/$(slides_files)
 	@mv $(slides_files) docs/
+
 
 .PHONY: check
 check:
