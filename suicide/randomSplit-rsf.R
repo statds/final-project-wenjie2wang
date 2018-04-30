@@ -9,9 +9,10 @@ inArgs <- commandArgs(trailingOnly = TRUE)
 id <- as.integer(inArgs[1L])
 
 ## source functions and packages
+source("../docker/enable_checkpoint.R")
 library(methods)
 source("../simulation/simu-fun.R")
-need.packages("randomForestSRC")
+library("randomForestSRC")
 
 ## read in simulated datasets as the train data and the test data
 inDir <- "../randomSplit"
